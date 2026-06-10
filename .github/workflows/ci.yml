@@ -1,43 +1,54 @@
 # File: .github/workflows/ci.yml
 
 name: Basic CI Pipeline
-
-on:
-  push:
-    branches:
-      - main
-      - development
-
-  pull_request:
-    branches:
-      - main
-      - development
-
+on: workflow_dispatch
+  
 jobs:
-  build-and-test:
+  job1:
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1 - Download repository code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2 - Install Python
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run a one-line script
+        run: echo "Hello, World!"
+      - name: Run multiple CLI commands
+        run: |
+          echo "Starting multi-line commands"
+          uname -a
+          echo "Listing files:"
+          ls -la
+          echo "Done"
+  job2:
+    needs: job1
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest`,macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run a one-line script
+        run: echo "Hello, World!"
+      - name: Run multiple CLI commands
+        run: |
+          echo "Starting multi-line commands"
+          uname -a
+          echo "Listing files:"
+          ls -la
+          echo "Done" > testfile.txt
+          cat testfile.txt
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
         with:
-          python-version: '3.12'
-
-      # Step 3 - Install dependencies
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pytest
-          if [ -f requirements.txt ]; then
-            pip install -r requirements.txt
-          fi
-
-      # Step 4 - Run tests
-      - name: Run tests
-        run: |
-          pytest
+            name: my-testfile-artifact
+            path: testfile.txt
+  job3:
+    needs: job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v7
+        with:
+            name: my-testfile-artifact
+      - name: Display artifact content
+        run: cat testfile.txt
