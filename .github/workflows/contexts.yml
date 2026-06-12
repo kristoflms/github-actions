@@ -1,0 +1,53 @@
+name: Contexts for CI Pipeline
+
+on:
+  workflow_dispatch:
+
+
+
+jobs:
+  dump-contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub Context
+        run: echo "${{ toJSON(github) }}"
+        
+      - name: Dump Job Context
+        run: echo "${{ toJSON(job) }}"
+        
+      - name: Dump Steps Context
+        run: echo "${{ toJSON(steps) }}"
+        
+      - name: Dump Runner Context
+        run: echo "${{ toJSON(runner) }}"
+        
+      - name: Dump Secrets Context
+        run: echo "${{ toJSON(secrets) }}"
+        
+      - name: Dump Strategy Context
+        run: echo "${{ toJSON(strategy) }}"
+        
+      - name: Dump Matrix Context
+        run: echo "${{ toJSON(matrix) }}"
+        
+      - name: Dump Env Context
+        run: echo "${{ toJSON(env) }}"
+        
+      - name: Log All Contexts
+        run: |
+          echo "=== GitHub Context ==="
+          echo "${{ toJSON(github) }}"
+          echo "=== Job Context ==="
+          echo "${{ toJSON(job) }}"
+          echo "=== Steps Context ==="
+          echo "${{ toJSON(steps) }}"
+          echo "=== Runner Context ==="
+          echo "${{ toJSON(runner) }}"
+          echo "=== Secrets Context ==="
+          echo "${{ toJSON(secrets) }}"
+          echo "=== Strategy Context ==="
+          echo "${{ toJSON(strategy) }}"
+          echo "=== Matrix Context ==="
+          echo "${{ toJSON(matrix) }}"
+          echo "=== Env Context ==="
+          echo "${{ toJSON(env) }}"
